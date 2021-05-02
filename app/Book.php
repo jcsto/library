@@ -8,4 +8,8 @@ class Book extends Model
 {
     // turns off mass assignment protection
     protected $guarded = [];
+
+    public function path() {
+        return '/books/' . $this->id;
+    }
 }
