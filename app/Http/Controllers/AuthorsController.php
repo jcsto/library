@@ -12,4 +12,10 @@ class AuthorsController extends Controller
             'name', 'dob'
         ]));
     }
+
+    public function update(Author $author) {
+        $author->name = request()->get('name');
+        $author->save();
+        return response()->json(['status' => true, 'message' => 'Success', 'name' => $author->name], 200);
+    }
 }

@@ -3,35 +3,43 @@
 namespace App\Http\Controllers;
 
 use App\Book;
+use App\Http\Requests\BookRequest;
+use App\Interfaces\BookInterface;
+use App\Repositories\BookRepository;
 use Illuminate\Http\Request;
 
 class BooksController extends Controller
 {
-    public function store(Request $request) {
-        $data = $this->validateRequest();
+    /**
+     * @var BookInterface
+     */
+    protected $bookInterface;
 
-        $book = Book::create($data);
+    public function __construct(BookInterface $bookInterface) {
+        $this->bookInterface = $bookInterface;
+    }
+
+    public function store(BookRequest $request) {
+        return $this->bookInterface->store($request);
+    }
+
+    public function storeRepository() {
+        $book = Book::create($this->validateRequest());
         return redirect($book->path());
     }
 
-    public function update(Request $request, Book $book) {
-        $data = $this->validateRequest();
-
-        $book->update($data);
-
-        return redirect($book->path());
+    public function update(BookRequest $request, Book $book) {
+        return $this->bookInterface->update($request, $book);
     }
 
-    public function delete(Request $request, Book $book) {
-        $book->delete();
-
-        return redirect('/books');
+    public function delete(Book $book) {
+        return $this->bookInterface->delete($book);
     }
 
     public function validateRequest() {
         return request()->validate([
             'title' => 'required',
-            'author' => 'required',
+            'author_id' => 'required',
         ]);
     }
 }
